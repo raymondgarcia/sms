@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping(path= "api/v1/student")
+@RequestMapping(path = "api/v1/student")
 public class StudentController {
 
     @Autowired
@@ -31,6 +31,11 @@ public class StudentController {
     @PutMapping(path = "{id}")
     public Student updateStudent(@PathVariable("id") Long id, @RequestBody Student student) {
         return service.updateStudent(id, student);
+    }
+
+    @GetMapping(path = "{id}")
+    public Student getStudent(@PathVariable("id") Long id) {
+        return service.getStudent(id);
     }
 
     @GetMapping

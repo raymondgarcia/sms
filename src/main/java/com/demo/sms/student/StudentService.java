@@ -1,6 +1,8 @@
 package com.demo.sms.student;
 
+import com.demo.sms.exceptions.ApiRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,14 +27,22 @@ public class StudentService {
     }
 
     public void deleteStudent(Long id) {
-        repository.deleteById(id);
+        try {
+            repository.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ApiRequestException("Student not found with ID: " + id);
+        }
     }
 
     @Transactional
     public Student updateStudent(Long id, Student student) {
-        Student originalStudent = repository.getById(id);
+        Student originalStudent = getStudent(id);
         originalStudent.setName(student.name);
         originalStudent.setEmail(student.email);
         return repository.save(originalStudent);
+    }
+
+    public Student getStudent(Long id) {
+        return repository.findById(id).orElseThrow(() -> new ApiRequestException("Student not found with ID: " + id));
     }
 }

@@ -14,7 +14,7 @@ public class StudentService {
     @Autowired
     StudentRepository repository;
 
-    public List<Student> getService() {
+    public List<Student> getStudents() {
         return repository.findAll();
     }
 

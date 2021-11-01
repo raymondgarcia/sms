@@ -1,5 +1,6 @@
 package com.demo.sms.student;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -27,24 +29,37 @@ public class StudentController {
     }
 
     @PostMapping
-    public ResponseEntity<Student> createStudent(@RequestBody Student student) {
+    public ResponseEntity<StudentResponse> createStudent(@RequestBody Student student) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("api/v1/student").toUriString());
-        return ResponseEntity.created(uri).body(service.createStudent(student));
+        StudentResponse response = new StudentResponse();
+        BeanUtils.copyProperties(service.createStudent(student), response);
+        return ResponseEntity.created(uri).body(response);
     }
 
     @PutMapping(path = "{id}")
-    public ResponseEntity<Student> updateStudent(@PathVariable("id") Long id, @RequestBody Student student) {
-        return ResponseEntity.ok().body(service.updateStudent(id, student));
+    public ResponseEntity<StudentResponse> updateStudent(@PathVariable("id") Long id, @RequestBody Student student) {
+        StudentResponse response = new StudentResponse();
+        BeanUtils.copyProperties(service.updateStudent(id, student), response);
+        return ResponseEntity.ok().body(response);
     }
 
     @GetMapping(path = "{id}")
-    public ResponseEntity<Student> getStudent(@PathVariable("id") Long id) {
-        return ResponseEntity.ok().body(service.getStudent(id));
+    public ResponseEntity<StudentResponse> getStudent(@PathVariable("id") Long id) {
+        StudentResponse response = new StudentResponse();
+        BeanUtils.copyProperties(service.getStudent(id), response);
+        return ResponseEntity.ok().body(response);
     }
 
     @GetMapping
-    public ResponseEntity<List<Student>> getStudents() {
-        return ResponseEntity.ok().body((service.getStudents()));
+    public ResponseEntity<List<StudentResponse>> getStudents() {
+        List<StudentResponse> response =  new ArrayList<>();
+        List<Student> students = service.getStudents();
+        students.forEach(student -> {
+            StudentResponse studentResponse = new StudentResponse();
+            BeanUtils.copyProperties(student, studentResponse);
+            response.add(studentResponse);
+        });
+        return ResponseEntity.ok().body(response);
     }
 
     @DeleteMapping(path = "{id}")

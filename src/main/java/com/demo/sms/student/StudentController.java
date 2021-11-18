@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,15 +30,19 @@ public class StudentController {
     }
 
     @PostMapping
-    public ResponseEntity<StudentResponse> createStudent(@RequestBody Student student) {
+    public ResponseEntity<StudentResponse> createStudent(@Valid @RequestBody StudentRequest studentRequest) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("api/v1/student").toUriString());
+        Student student = new Student();
+        BeanUtils.copyProperties(studentRequest, student);
         StudentResponse response = new StudentResponse();
         BeanUtils.copyProperties(service.createStudent(student), response);
         return ResponseEntity.created(uri).body(response);
     }
 
     @PutMapping(path = "{id}")
-    public ResponseEntity<StudentResponse> updateStudent(@PathVariable("id") Long id, @RequestBody Student student) {
+    public ResponseEntity<StudentResponse> updateStudent(@PathVariable("id") Long id, @Valid @RequestBody StudentRequest studentRequest) {
+        Student student = new Student();
+        BeanUtils.copyProperties(studentRequest, student);
         StudentResponse response = new StudentResponse();
         BeanUtils.copyProperties(service.updateStudent(id, student), response);
         return ResponseEntity.ok().body(response);

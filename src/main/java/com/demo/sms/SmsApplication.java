@@ -35,15 +35,16 @@ public class SmsApplication {
 	@Bean
 	CommandLineRunner commandLineRunner(StudentRepository repository, UserService userService) {
 		return args -> {
-			Student dummy = new Student(1L,
-					"dummy",
-					"dummy@dummy.com", LocalDate.of(2000, Month.JANUARY, 5));
+			List<Student> list = new ArrayList<>();
+			for (long id = 1; id < 100; id++) {
+				Student dummy = new Student(id,
+						"dummy",
+						"dummy"+id+"@dummy.com", LocalDate.of(2000, Month.JANUARY, 5));
+				list.add(dummy);
+			}
 
-			Student dummy1 = new Student(2L,
-					"dummy1",
-					"dummy1@dummy.com", LocalDate.of(2000, Month.JANUARY, 5));
 
-			repository.saveAll(List.of(dummy, dummy1));
+			repository.saveAll(list);
 
 
 			userService.saveRole(new Role(null, "ROLE_USER"));

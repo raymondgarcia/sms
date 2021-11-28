@@ -2,6 +2,9 @@ package com.demo.sms.student;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -56,13 +59,12 @@ public class StudentController {
     }
 
     @GetMapping
-    public ResponseEntity<List<StudentResponse>> getStudents() {
-        List<StudentResponse> response =  new ArrayList<>();
-        List<Student> students = service.getStudents();
-        students.forEach(student -> {
+    public ResponseEntity<Page<StudentResponse>> getStudents(Pageable pageable) {
+        Page<Student> students = service.getStudents(pageable);
+        Page<StudentResponse> response = students.map(student -> {
             StudentResponse studentResponse = new StudentResponse();
             BeanUtils.copyProperties(student, studentResponse);
-            response.add(studentResponse);
+            return studentResponse;
         });
         return ResponseEntity.ok().body(response);
     }

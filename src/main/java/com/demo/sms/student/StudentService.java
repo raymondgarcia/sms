@@ -3,6 +3,8 @@ package com.demo.sms.student;
 import com.demo.sms.exceptions.ApiRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,8 +16,8 @@ public class StudentService {
     @Autowired
     StudentRepository repository;
 
-    public List<Student> getStudents() {
-        return repository.findAll();
+    public Page<Student> getStudents(Pageable pageable) {
+        return repository.findAll(pageable);
     }
 
     public Student findByEmail(String email) throws RuntimeException {
